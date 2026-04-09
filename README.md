@@ -13,6 +13,7 @@ HealthAI bridges this gap by:
 - Providing a default workout and nutrition plan that's immediately available
 - Using Claude AI to personalize plans based on the user's real data and profile
 - Offering an AI chat coach that can answer health questions using the user's actual metrics
+- Scanning food photos with AI to estimate calories, macros, and suggest healthier swaps
 - Visualizing trends with interactive charts so users understand their progress
 
 ## Tech Stack
@@ -52,6 +53,17 @@ HealthAI bridges this gap by:
 - Set goals: daily steps, target weight, weekly calories, sleep hours, workout frequency
 - Track progress with visual progress bars
 - Update progress inline, auto-complete when target reached
+
+### AI Food Scanner
+- **Photo Upload** — upload a food photo or take one with your camera (drag & drop supported)
+- **AI Analysis** — Claude vision identifies the food and estimates calories, protein, carbs, fat, and fiber
+- **Meal Quality Score** — 1-10 rating with color-coded label (Poor → Excellent)
+- **Item Breakdown** — each component listed separately with individual calories
+- **Healthier Swaps** — "Instead of X, try Y — save ~N kcal" suggestions
+- **Positives & Improvements** — what's good about the meal and what could be better
+- **Key Nutrients** — vitamins and minerals present in the meal
+- **Correction Flow** — if the AI misidentifies something, users can type a correction (e.g. "That's lamb not beef") and the analysis updates in place
+- **Quick Log** — one tap to log the scanned meal directly to the Nutrition page
 
 ### AI Health Coach
 - **Chat Interface** — conversational AI coach with access to the user's real health data
@@ -104,7 +116,8 @@ Senior Project 1/
 │   │   │   ├── dashboard.py     # Aggregated summary
 │   │   │   ├── wearable.py      # Simulated sync
 │   │   │   ├── recommendations.py # AI plan generation
-│   │   │   └── chat.py          # AI chat endpoint
+│   │   │   ├── chat.py          # AI chat endpoint
+│   │   │   └── food_scan.py     # AI food image analysis
 │   │   └── services/
 │   │       └── ai_service.py    # Claude API integration
 │   ├── requirements.txt
@@ -121,6 +134,7 @@ Senior Project 1/
 │   │   │   ├── NutritionPage.tsx
 │   │   │   ├── GoalsPage.tsx
 │   │   │   ├── RecommendationsPage.tsx  # Chat + Plan
+│   │   │   ├── FoodScanPage.tsx        # AI food photo analysis
 │   │   │   ├── ProfilePage.tsx
 │   │   │   ├── LoginPage.tsx
 │   │   │   └── RegisterPage.tsx
@@ -183,6 +197,7 @@ Frontend runs at **http://localhost:5173**
 4. Check the **AI Coach** page — a starter plan is already available
 5. Click **Personalize with AI** to get a plan tailored to your data
 6. Chat with the AI Coach to ask questions about your health
+7. Try **Food Scan** — upload a food photo to get instant calorie and macro estimates
 
 ## API Endpoints
 
@@ -202,6 +217,8 @@ Frontend runs at **http://localhost:5173**
 | POST | `/ai/recommendations` | Generate AI plan |
 | GET | `/ai/recommendations` | Get cached plans |
 | POST | `/chat` | Chat with AI coach |
+| POST | `/food-scan/analyze` | Analyze food photo (upload image) |
+| POST | `/food-scan/correct` | Correct a food analysis |
 
 ## Database Schema
 
