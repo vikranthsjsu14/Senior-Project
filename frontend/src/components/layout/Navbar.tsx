@@ -7,6 +7,7 @@ const navItems = [
   { path: '/activities', label: 'Activities' },
   { path: '/nutrition', label: 'Nutrition' },
   { path: '/goals', label: 'Goals' },
+  { path: '/food-scan', label: 'Food Scan' },
   { path: '/recommendations', label: 'AI Coach' },
   { path: '/profile', label: 'Profile' },
 ];

@@ -11,6 +11,7 @@ import NutritionPage from './pages/NutritionPage';
 import GoalsPage from './pages/GoalsPage';
 import RecommendationsPage from './pages/RecommendationsPage';
 import ProfilePage from './pages/ProfilePage';
+import FoodScanPage from './pages/FoodScanPage';
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/nutrition" element={<PrivateRoute><AppLayout><NutritionPage /></AppLayout></PrivateRoute>} />
           <Route path="/goals" element={<PrivateRoute><AppLayout><GoalsPage /></AppLayout></PrivateRoute>} />
           <Route path="/recommendations" element={<PrivateRoute><AppLayout><RecommendationsPage /></AppLayout></PrivateRoute>} />
+          <Route path="/food-scan" element={<PrivateRoute><AppLayout><FoodScanPage /></AppLayout></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><AppLayout><ProfilePage /></AppLayout></PrivateRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

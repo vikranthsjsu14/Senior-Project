@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from .database import create_db_and_tables
-from .routers import auth, users, health_metrics, activities, nutrition, goals, dashboard, wearable, recommendations, chat
+from .routers import auth, users, health_metrics, activities, nutrition, goals, dashboard, wearable, recommendations, chat, food_scan
 
 # Import all models so SQLModel registers them before create_all
 from .models import user, health_metrics as hm_model, activity, nutrition as nut_model, goals as goals_model, ai_recommendation  # noqa: F401
@@ -40,6 +40,7 @@ app.include_router(dashboard.router)
 app.include_router(wearable.router)
 app.include_router(recommendations.router)
 app.include_router(chat.router)
+app.include_router(food_scan.router)
 
 
 @app.get("/")
