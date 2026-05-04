@@ -12,7 +12,7 @@ export default function MetricCard({ label, value, unit, icon, color, subtext }:
     <div style={{ ...styles.card, borderTop: `3px solid ${color}` }}>
       <div style={styles.top}>
         <span style={styles.icon}>{icon}</span>
-        <span style={{ ...styles.label, color: '#94a3b8' }}>{label}</span>
+        <span style={{ ...styles.label, color: 'var(--text-secondary)' }}>{label}</span>
       </div>
       <div style={styles.valueRow}>
         <span style={{ ...styles.value, color }}>{value}</span>
@@ -25,7 +25,7 @@ export default function MetricCard({ label, value, unit, icon, color, subtext }:
 
 const styles: Record<string, React.CSSProperties> = {
   card: {
-    backgroundColor: '#1e293b',
+    backgroundColor: 'var(--bg-card)',
     borderRadius: '12px',
     padding: '20px',
     flex: 1,
@@ -36,6 +36,6 @@ const styles: Record<string, React.CSSProperties> = {
   label: { fontSize: '13px', fontWeight: 500 },
   valueRow: { display: 'flex', alignItems: 'baseline', gap: '4px' },
   value: { fontSize: '32px', fontWeight: 700 },
-  unit: { fontSize: '14px', color: '#64748b' },
-  subtext: { fontSize: '12px', color: '#64748b', marginTop: '4px' },
+  unit: { fontSize: '14px', color: 'var(--text-muted)' },
+  subtext: { fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' },
 };

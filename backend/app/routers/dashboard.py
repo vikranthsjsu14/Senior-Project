@@ -12,6 +12,21 @@ from .auth import CurrentUser
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
 
+def _compute_streak(metrics_by_date: dict, target_steps: int) -> int:
+    """Count consecutive days ending today where steps >= target_steps."""
+    if target_steps <= 0:
+        return 0
+    streak = 0
+    cursor = date.today()
+    while True:
+        m = metrics_by_date.get(cursor)
+        if m is None or m.steps < target_steps:
+            break
+        streak += 1
+        cursor -= timedelta(days=1)
+    return streak
+
+
 @router.get("/summary")
 def get_dashboard_summary(current_user: CurrentUser, session: SessionDep):
     today = date.today()
@@ -67,6 +82,20 @@ def get_dashboard_summary(current_user: CurrentUser, session: SessionDep):
     if sleep_logs:
         avg_sleep = round(sum(s.duration_hours for s in sleep_logs) / len(sleep_logs), 1)
 
+    # Streak: consecutive days ending today hitting the daily-steps goal
+    step_goal = next((g for g in active_goals if g.type == "steps_daily"), None)
+    streak_days = 0
+    streak_target = 0
+    if step_goal:
+        streak_target = int(step_goal.target_value)
+        streak_window = session.exec(
+            select(DailyMetrics)
+            .where(DailyMetrics.user_id == current_user.id)
+            .where(DailyMetrics.date >= today - timedelta(days=90))
+        ).all()
+        metrics_by_date = {m.date: m for m in streak_window}
+        streak_days = _compute_streak(metrics_by_date, streak_target)
+
     return {
         "today": today_metrics,
         "weekly_metrics": [
@@ -115,5 +144,9 @@ def get_dashboard_summary(current_user: CurrentUser, session: SessionDep):
             "avg_steps": avg_steps,
             "avg_calories_burned": avg_calories_burned,
             "avg_sleep_hours": avg_sleep,
+        },
+        "streak": {
+            "days": streak_days,
+            "target_steps": streak_target,
         },
     }

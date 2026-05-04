@@ -1,18 +1,18 @@
-from fastapi import APIRouter
-from pydantic import BaseModel
-from typing import List, Optional
+from fastapi import APIRouter, HTTPException, Request
+from pydantic import BaseModel, Field
+from typing import List, Literal
 from datetime import date, timedelta
-import json
 import anthropic
 from sqlmodel import select
 
 from ..database import SessionDep
 from ..config import settings
+from ..limiter import limiter
 from ..models.user import User
 from ..models.health_metrics import DailyMetrics, SleepLog
 from ..models.activity import Activity
 from ..models.goals import Goal
-from ..models.nutrition import NutritionLog
+from ..services.ai_errors import call_claude
 from .auth import CurrentUser
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -143,28 +143,29 @@ def _build_user_context(user: User, session) -> str:
 
 
 class ChatMessage(BaseModel):
-    role: str  # 'user' or 'assistant'
-    content: str
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=4000)
 
 
 class ChatRequest(BaseModel):
-    messages: List[ChatMessage]
+    messages: List[ChatMessage] = Field(min_length=1, max_length=50)
 
 
 @router.post("")
-def chat(body: ChatRequest, current_user: CurrentUser, session: SessionDep):
-    system_prompt = _build_user_context(current_user, session)
+@limiter.limit("20/minute")
+def chat(request: Request, body: ChatRequest, current_user: CurrentUser, session: SessionDep):
+    if body.messages[-1].role != "user":
+        raise HTTPException(status_code=400, detail="The last message must be from the user.")
 
-    # Convert to Anthropic format
+    system_prompt = _build_user_context(current_user, session)
     api_messages = [{"role": m.role, "content": m.content} for m in body.messages]
 
     ai_client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
-    response = ai_client.messages.create(
+    reply = call_claude(
+        ai_client,
         model="claude-haiku-4-5-20251001",
         max_tokens=1024,
         system=system_prompt,
         messages=api_messages,
     )
-
-    reply = response.content[0].text
     return {"reply": reply}

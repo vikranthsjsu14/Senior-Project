@@ -6,8 +6,12 @@ import {
 import { getDashboardSummary, syncWearable } from '../api/dashboard';
 import { DashboardSummary } from '../types';
 import MetricCard from '../components/dashboard/MetricCard';
+import GoalRing from '../components/dashboard/GoalRing';
+import StreakBadge from '../components/dashboard/StreakBadge';
+import { useTheme } from '../context/ThemeContext';
 
 export default function DashboardPage() {
+  const { colors } = useTheme();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
@@ -61,6 +65,18 @@ export default function DashboardPage() {
 
       {syncMsg && <div style={styles.syncMsg}>{syncMsg}</div>}
 
+      {/* Streak + Goal Ring */}
+      <section style={styles.topRow}>
+        <div style={styles.ringCard}>
+          <GoalRing
+            current={today?.steps || 0}
+            target={summary?.streak.target_steps || 10000}
+            label="Today's Steps"
+          />
+        </div>
+        <StreakBadge days={summary?.streak.days || 0} target={summary?.streak.target_steps || 0} />
+      </section>
+
       {/* Today's Stats */}
       <section style={styles.section}>
         <h2 style={styles.sectionTitle}>Today's Stats</h2>
@@ -69,7 +85,7 @@ export default function DashboardPage() {
             label="Steps"
             value={today?.steps?.toLocaleString() || 0}
             icon="👟"
-            color="#4ade80"
+            color="var(--accent)"
             subtext={`7-day avg: ${avg_steps?.toLocaleString()}`}
           />
           <MetricCard
@@ -112,11 +128,11 @@ export default function DashboardPage() {
           {summary?.weekly_metrics.length ? (
             <ResponsiveContainer width="100%" height={200}>
               <AreaChart data={summary.weekly_metrics}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis dataKey="date" tick={{ fill: '#64748b', fontSize: 11 }} tickFormatter={(d) => d.slice(5)} />
-                <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }} />
-                <Area type="monotone" dataKey="steps" stroke="#4ade80" fill="rgba(74,222,128,0.15)" />
+                <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                <XAxis dataKey="date" tick={{ fill: colors.textMuted, fontSize: 11 }} tickFormatter={(d) => d.slice(5)} />
+                <YAxis tick={{ fill: colors.textMuted, fontSize: 11 }} />
+                <Tooltip contentStyle={{ backgroundColor: colors.bgCard, border: `1px solid ${colors.border}`, borderRadius: '8px', color: colors.text }} />
+                <Area type="monotone" dataKey="steps" stroke={colors.accent} fill="rgba(74,222,128,0.15)" />
               </AreaChart>
             </ResponsiveContainer>
           ) : <EmptyChart />}
@@ -128,10 +144,10 @@ export default function DashboardPage() {
           {summary?.weekly_metrics.length ? (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={summary.weekly_metrics}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis dataKey="date" tick={{ fill: '#64748b', fontSize: 11 }} tickFormatter={(d) => d.slice(5)} />
-                <YAxis tick={{ fill: '#64748b', fontSize: 11 }} />
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                <XAxis dataKey="date" tick={{ fill: colors.textMuted, fontSize: 11 }} tickFormatter={(d) => d.slice(5)} />
+                <YAxis tick={{ fill: colors.textMuted, fontSize: 11 }} />
+                <Tooltip contentStyle={{ backgroundColor: colors.bgCard, border: `1px solid ${colors.border}`, borderRadius: '8px', color: colors.text }} />
                 <Bar dataKey="calories_burned" name="Burned" fill="#fb923c" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="calories_consumed" name="Consumed" fill="#38bdf8" radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -145,10 +161,10 @@ export default function DashboardPage() {
           {summary?.sleep_logs.length ? (
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={summary.sleep_logs}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis dataKey="date" tick={{ fill: '#64748b', fontSize: 11 }} tickFormatter={(d) => d.slice(5)} />
-                <YAxis tick={{ fill: '#64748b', fontSize: 11 }} domain={[0, 12]} />
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke={colors.border} />
+                <XAxis dataKey="date" tick={{ fill: colors.textMuted, fontSize: 11 }} tickFormatter={(d) => d.slice(5)} />
+                <YAxis tick={{ fill: colors.textMuted, fontSize: 11 }} domain={[0, 12]} />
+                <Tooltip contentStyle={{ backgroundColor: colors.bgCard, border: `1px solid ${colors.border}`, borderRadius: '8px', color: colors.text }} />
                 <Bar dataKey="duration_hours" name="Hours" fill="#f472b6" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -193,7 +209,7 @@ export default function DashboardPage() {
                       style={{
                         ...styles.progressFill,
                         width: `${Math.min(100, g.progress_percent)}%`,
-                        backgroundColor: g.progress_percent >= 100 ? '#4ade80' : '#38bdf8',
+                        backgroundColor: g.progress_percent >= 100 ? 'var(--accent)' : '#38bdf8',
                       }}
                     />
                   </div>
@@ -219,20 +235,20 @@ function typeIcon(type: string) {
 
 function EmptyChart() {
   return (
-    <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: '14px' }}>
+    <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-dim)', fontSize: '14px' }}>
       No data yet — sync wearable or log manually
     </div>
   );
 }
 
 function EmptyState({ text }: { text: string }) {
-  return <p style={{ color: '#475569', fontSize: '14px', padding: '16px 0' }}>{text}</p>;
+  return <p style={{ color: 'var(--text-dim)', fontSize: '14px', padding: '16px 0' }}>{text}</p>;
 }
 
 function PageLoader() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-      <div style={{ color: '#4ade80', fontSize: '18px' }}>Loading dashboard...</div>
+      <div style={{ color: 'var(--accent)', fontSize: '18px' }}>Loading dashboard...</div>
     </div>
   );
 }
@@ -240,45 +256,47 @@ function PageLoader() {
 const styles: Record<string, React.CSSProperties> = {
   page: { padding: '24px', maxWidth: '1400px', margin: '0 auto' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' },
-  title: { color: '#f1f5f9', margin: 0, fontSize: '28px' },
-  subtitle: { color: '#64748b', margin: '4px 0 0', fontSize: '14px' },
+  topRow: { display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' },
+  ringCard: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '12px', flex: '1 1 280px', minWidth: '280px' },
+  title: { color: 'var(--text)', margin: 0, fontSize: '28px' },
+  subtitle: { color: 'var(--text-muted)', margin: '4px 0 0', fontSize: '14px' },
   syncBtn: {
     padding: '10px 18px',
-    backgroundColor: '#1e293b',
-    color: '#4ade80',
-    border: '1px solid #4ade80',
+    backgroundColor: 'var(--bg-card)',
+    color: 'var(--accent)',
+    border: '1px solid var(--accent)',
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '14px',
   },
   syncMsg: {
     backgroundColor: 'rgba(74,222,128,0.1)',
-    border: '1px solid #4ade80',
-    color: '#4ade80',
+    border: '1px solid var(--accent)',
+    color: 'var(--accent)',
     padding: '10px 16px',
     borderRadius: '8px',
     marginBottom: '16px',
     fontSize: '14px',
   },
   section: { marginBottom: '24px' },
-  sectionTitle: { color: '#94a3b8', fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' },
+  sectionTitle: { color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' },
   cards: { display: 'flex', gap: '12px', flexWrap: 'wrap' },
   charts: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px', marginBottom: '16px' },
-  chartCard: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '20px' },
-  chartTitle: { color: '#94a3b8', fontSize: '14px', fontWeight: 600, margin: '0 0 16px', textTransform: 'uppercase', letterSpacing: '0.5px' },
+  chartCard: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '20px' },
+  chartTitle: { color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, margin: '0 0 16px', textTransform: 'uppercase', letterSpacing: '0.5px' },
   bottomRow: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' },
-  listCard: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '20px' },
+  listCard: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '20px' },
   activityList: { display: 'flex', flexDirection: 'column', gap: '10px' },
   activityItem: { display: 'flex', alignItems: 'center', gap: '12px' },
   activityIcon: { fontSize: '24px', width: '36px', textAlign: 'center' },
-  activityName: { color: '#f1f5f9', fontSize: '14px', fontWeight: 500 },
-  activityMeta: { color: '#64748b', fontSize: '12px' },
+  activityName: { color: 'var(--text)', fontSize: '14px', fontWeight: 500 },
+  activityMeta: { color: 'var(--text-muted)', fontSize: '12px' },
   goalList: { display: 'flex', flexDirection: 'column', gap: '14px' },
   goalItem: {},
   goalHeader: { display: 'flex', justifyContent: 'space-between', marginBottom: '4px' },
-  goalType: { color: '#f1f5f9', fontSize: '13px' },
+  goalType: { color: 'var(--text)', fontSize: '13px' },
   goalPct: { color: '#38bdf8', fontSize: '13px', fontWeight: 600 },
-  progressBar: { height: '6px', backgroundColor: '#0f172a', borderRadius: '3px', overflow: 'hidden' },
+  progressBar: { height: '6px', backgroundColor: 'var(--bg-input)', borderRadius: '3px', overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: '3px', transition: 'width 0.3s ease' },
-  goalMeta: { color: '#64748b', fontSize: '11px', marginTop: '3px' },
+  goalMeta: { color: 'var(--text-muted)', fontSize: '11px', marginTop: '3px' },
 };

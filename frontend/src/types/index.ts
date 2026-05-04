@@ -168,6 +168,10 @@ export interface DashboardSummary {
     avg_calories_burned: number;
     avg_sleep_hours: number;
   };
+  streak: {
+    days: number;
+    target_steps: number;
+  };
 }
 
 // AI Recommendations

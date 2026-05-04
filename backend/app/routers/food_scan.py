@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Request
 from pydantic import BaseModel
 import anthropic
 import base64
@@ -6,6 +6,8 @@ import json
 
 from ..config import settings
 from ..database import SessionDep
+from ..limiter import limiter
+from ..services.ai_errors import call_claude, parse_ai_json
 from .auth import CurrentUser
 
 router = APIRouter(prefix="/food-scan", tags=["food-scan"])
@@ -50,15 +52,16 @@ RULES:
 
 
 @router.post("/analyze")
+@limiter.limit("10/minute")
 async def analyze_food_image(
+    request: Request,
+    current_user: CurrentUser,
+    session: SessionDep,
     file: UploadFile = File(...),
-    current_user: CurrentUser = None,
-    session: SessionDep = None,
 ):
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image (JPEG, PNG, etc.)")
 
-    # Read and encode image
     image_data = await file.read()
     if len(image_data) > 10 * 1024 * 1024:  # 10MB limit
         raise HTTPException(status_code=400, detail="Image must be under 10MB")
@@ -66,48 +69,29 @@ async def analyze_food_image(
     base64_image = base64.standard_b64encode(image_data).decode("utf-8")
     media_type = file.content_type
 
-    try:
-        ai_client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
-        response = ai_client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=1500,
-            system=SYSTEM_PROMPT,
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "image",
-                            "source": {
-                                "type": "base64",
-                                "media_type": media_type,
-                                "data": base64_image,
-                            },
-                        },
-                        {
-                            "type": "text",
-                            "text": "Analyze this food image. Estimate the calories, macros, meal quality, and suggest healthier swaps.",
-                        },
-                    ],
-                }
-            ],
-        )
-
-        result_text = response.content[0].text.strip()
-        # Strip markdown code blocks if present
-        if result_text.startswith("```"):
-            result_text = result_text.split("\n", 1)[1]  # remove ```json line
-            result_text = result_text.rsplit("```", 1)[0]  # remove closing ```
-            result_text = result_text.strip()
-        result = json.loads(result_text)
-        return {"analysis": result}
-
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=500, detail="AI returned invalid response. Please try again.")
-    except anthropic.BadRequestError as e:
-        raise HTTPException(status_code=400, detail=f"Could not process image: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+    ai_client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+    result_text = call_claude(
+        ai_client,
+        model="claude-haiku-4-5-20251001",
+        max_tokens=1500,
+        system=SYSTEM_PROMPT,
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image",
+                        "source": {"type": "base64", "media_type": media_type, "data": base64_image},
+                    },
+                    {
+                        "type": "text",
+                        "text": "Analyze this food image. Estimate the calories, macros, meal quality, and suggest healthier swaps.",
+                    },
+                ],
+            }
+        ],
+    )
+    return {"analysis": parse_ai_json(result_text)}
 
 
 class CorrectionRequest(BaseModel):
@@ -116,45 +100,33 @@ class CorrectionRequest(BaseModel):
 
 
 @router.post("/correct")
+@limiter.limit("10/minute")
 def correct_analysis(
+    request: Request,
     body: CorrectionRequest,
     current_user: CurrentUser,
     session: SessionDep,
 ):
-    try:
-        ai_client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
-        response = ai_client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=1500,
-            system=SYSTEM_PROMPT,
-            messages=[
-                {
-                    "role": "user",
-                    "content": "Here is a food image analysis result:\n\n"
-                    + json.dumps(body.original_analysis, indent=2),
-                },
-                {
-                    "role": "assistant",
-                    "content": json.dumps(body.original_analysis),
-                },
-                {
-                    "role": "user",
-                    "content": f"The user has corrected your analysis: \"{body.correction}\"\n\n"
-                    "Please re-analyze with this correction. Update the food name, calories, macros, "
-                    "breakdown, healthier swaps, and meal quality score accordingly. "
-                    "Return the full updated JSON response.",
-                },
-            ],
-        )
-
-        result_text = response.content[0].text.strip()
-        if result_text.startswith("```"):
-            result_text = result_text.split("\n", 1)[1]
-            result_text = result_text.rsplit("```", 1)[0].strip()
-        result = json.loads(result_text)
-        return {"analysis": result}
-
-    except json.JSONDecodeError:
-        raise HTTPException(status_code=500, detail="AI returned invalid response. Please try again.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Correction failed: {str(e)}")
+    ai_client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+    result_text = call_claude(
+        ai_client,
+        model="claude-haiku-4-5-20251001",
+        max_tokens=1500,
+        system=SYSTEM_PROMPT,
+        messages=[
+            {
+                "role": "user",
+                "content": "Here is a food image analysis result:\n\n"
+                + json.dumps(body.original_analysis, indent=2),
+            },
+            {"role": "assistant", "content": json.dumps(body.original_analysis)},
+            {
+                "role": "user",
+                "content": f"The user has corrected your analysis: \"{body.correction}\"\n\n"
+                "Please re-analyze with this correction. Update the food name, calories, macros, "
+                "breakdown, healthier swaps, and meal quality score accordingly. "
+                "Return the full updated JSON response.",
+            },
+        ],
+    )
+    return {"analysis": parse_ai_json(result_text)}

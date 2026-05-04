@@ -210,7 +210,7 @@ export default function MetricsPage() {
               <div style={styles.grid}>
                 <Field label="BPM" type="number" value={hrForm.bpm} onChange={(v) => setHrForm({ ...hrForm, bpm: v })} placeholder="e.g. 72" required />
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ color: '#94a3b8', fontSize: '13px', fontWeight: 500 }}>Context</label>
+                  <label style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>Context</label>
                   <select value={hrForm.context} onChange={(e) => setHrForm({ ...hrForm, context: e.target.value })} style={styles.select}>
                     <option value="resting">Resting</option>
                     <option value="active">Active / During workout</option>
@@ -221,9 +221,9 @@ export default function MetricsPage() {
               </div>
 
               <div style={styles.hrReference}>
-                <strong style={{ color: '#94a3b8', fontSize: '13px' }}>Typical ranges:</strong>
+                <strong style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Typical ranges:</strong>
                 <div style={styles.hrRanges}>
-                  <span style={{ color: '#4ade80' }}>Resting: 60–100 bpm</span>
+                  <span style={{ color: 'var(--accent)' }}>Resting: 60–100 bpm</span>
                   <span style={{ color: '#fb923c' }}>Active: 100–160 bpm</span>
                   <span style={{ color: '#f472b6' }}>Peak: 160–220 bpm</span>
                 </div>
@@ -246,8 +246,8 @@ export default function MetricsPage() {
                 <div key={w.name} style={styles.wearableItem}>
                   <span style={{ fontSize: '20px' }}>{w.icon}</span>
                   <div>
-                    <div style={{ color: '#f1f5f9', fontSize: '13px', fontWeight: 600 }}>{w.name}</div>
-                    <div style={{ color: '#64748b', fontSize: '12px' }}>{w.tip}</div>
+                    <div style={{ color: 'var(--text)', fontSize: '13px', fontWeight: 600 }}>{w.name}</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{w.tip}</div>
                   </div>
                 </div>
               ))}
@@ -264,9 +264,9 @@ function Field({ label, type = 'text', value, onChange, placeholder, required }:
 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-      <label style={{ color: '#94a3b8', fontSize: '13px', fontWeight: 500 }}>{label}</label>
+      <label style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} required={required}
-        style={{ padding: '10px 14px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '8px', color: '#f1f5f9', fontSize: '14px', outline: 'none' }} />
+        style={{ padding: '10px 14px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text)', fontSize: '14px', outline: 'none' }} />
     </div>
   );
 }
@@ -274,28 +274,28 @@ function Field({ label, type = 'text', value, onChange, placeholder, required }:
 const styles: Record<string, React.CSSProperties> = {
   page: { padding: '24px', maxWidth: '1100px', margin: '0 auto' },
   header: { marginBottom: '24px' },
-  title: { color: '#f1f5f9', margin: 0 },
-  subtitle: { color: '#64748b', fontSize: '14px', margin: '4px 0 0' },
+  title: { color: 'var(--text)', margin: 0 },
+  subtitle: { color: 'var(--text-muted)', fontSize: '14px', margin: '4px 0 0' },
   tabs: { display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' },
-  tab: { padding: '10px 20px', backgroundColor: '#1e293b', color: '#94a3b8', border: '1px solid #334155', borderRadius: '8px', cursor: 'pointer', fontSize: '14px' },
-  activeTab: { backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80', borderColor: '#4ade80' },
+  tab: { padding: '10px 20px', backgroundColor: 'var(--bg-card)', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderRadius: '8px', cursor: 'pointer', fontSize: '14px' },
+  activeTab: { backgroundColor: 'rgba(74,222,128,0.1)', color: 'var(--accent)', borderColor: 'var(--accent)' },
   twoCol: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' },
-  form: { backgroundColor: '#1e293b', padding: '24px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '16px' },
-  formTitle: { color: '#f1f5f9', margin: 0, fontSize: '16px' },
-  formHint: { color: '#64748b', fontSize: '13px', margin: 0 },
+  form: { backgroundColor: 'var(--bg-card)', padding: '24px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '16px' },
+  formTitle: { color: 'var(--text)', margin: 0, fontSize: '16px' },
+  formHint: { color: 'var(--text-muted)', fontSize: '13px', margin: 0 },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' },
-  select: { padding: '10px 14px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '8px', color: '#f1f5f9', fontSize: '14px' },
-  btn: { padding: '12px 24px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '15px', cursor: 'pointer', alignSelf: 'flex-start' },
-  success: { backgroundColor: 'rgba(74,222,128,0.1)', border: '1px solid #4ade80', color: '#4ade80', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
+  select: { padding: '10px 14px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text)', fontSize: '14px' },
+  btn: { padding: '12px 24px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '15px', cursor: 'pointer', alignSelf: 'flex-start' },
+  success: { backgroundColor: 'rgba(74,222,128,0.1)', border: '1px solid var(--accent)', color: 'var(--accent)', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
   error: { backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#fca5a5', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
-  historyBox: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '24px' },
+  historyBox: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '24px' },
   historyList: { display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' },
-  historyItem: { backgroundColor: '#0f172a', borderRadius: '8px', padding: '10px 14px' },
+  historyItem: { backgroundColor: 'var(--bg-input)', borderRadius: '8px', padding: '10px 14px' },
   historyDate: { color: '#38bdf8', fontSize: '12px', fontWeight: 600, display: 'block', marginBottom: '4px' },
-  historyStats: { display: 'flex', gap: '14px', flexWrap: 'wrap', color: '#94a3b8', fontSize: '13px' },
-  empty: { color: '#475569', fontSize: '14px', marginTop: '12px' },
-  hrReference: { backgroundColor: '#0f172a', borderRadius: '8px', padding: '12px 16px' },
+  historyStats: { display: 'flex', gap: '14px', flexWrap: 'wrap', color: 'var(--text-secondary)', fontSize: '13px' },
+  empty: { color: 'var(--text-dim)', fontSize: '14px', marginTop: '12px' },
+  hrReference: { backgroundColor: 'var(--bg-input)', borderRadius: '8px', padding: '12px 16px' },
   hrRanges: { display: 'flex', gap: '16px', flexWrap: 'wrap', marginTop: '6px', fontSize: '13px' },
   wearableGuide: { display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' },
-  wearableItem: { display: 'flex', gap: '12px', alignItems: 'flex-start', backgroundColor: '#0f172a', borderRadius: '8px', padding: '10px 14px' },
+  wearableItem: { display: 'flex', gap: '12px', alignItems: 'flex-start', backgroundColor: 'var(--bg-input)', borderRadius: '8px', padding: '10px 14px' },
 };

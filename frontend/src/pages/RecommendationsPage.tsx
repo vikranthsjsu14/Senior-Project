@@ -4,6 +4,7 @@ import { generateRecommendations } from '../api/recommendations';
 import { AIRecommendationData } from '../types';
 import client from '../api/client';
 import jsPDF from 'jspdf';
+import { useTheme } from '../context/ThemeContext';
 
 const INTENSITIES: Record<string, string> = { low: '🟢', moderate: '🟡', high: '🔴', rest: '⚫' };
 
@@ -51,6 +52,7 @@ const DEFAULT_PLAN: AIRecommendationData = {
 };
 
 export default function RecommendationsPage() {
+  const { colors } = useTheme();
   const [tab, setTab] = useState<Tab>('chat');
 
   // Plan state — starts with default plan
@@ -302,7 +304,7 @@ export default function RecommendationsPage() {
   };
 
   const macroData = data ? [
-    { name: 'Protein', value: data.nutrition_advice.macro_targets.protein_g, color: '#4ade80' },
+    { name: 'Protein', value: data.nutrition_advice.macro_targets.protein_g, color: 'var(--accent)' },
     { name: 'Carbs', value: data.nutrition_advice.macro_targets.carbs_g, color: '#38bdf8' },
     { name: 'Fat', value: data.nutrition_advice.macro_targets.fat_g, color: '#f472b6' },
   ] : [];
@@ -403,10 +405,10 @@ export default function RecommendationsPage() {
                 <h4 style={styles.tipsTitle}>Current Plan</h4>
                 <div style={styles.miniPlanItem}>
                   <span style={{ color: '#fb923c', fontWeight: 700 }}>{data.nutrition_advice.daily_calorie_target}</span>
-                  <span style={{ color: '#64748b', fontSize: '12px' }}> kcal/day target</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}> kcal/day target</span>
                 </div>
                 <div style={styles.miniMacros}>
-                  <span style={{ color: '#4ade80' }}>P {data.nutrition_advice.macro_targets.protein_g}g</span>
+                  <span style={{ color: 'var(--accent)' }}>P {data.nutrition_advice.macro_targets.protein_g}g</span>
                   <span style={{ color: '#38bdf8' }}>C {data.nutrition_advice.macro_targets.carbs_g}g</span>
                   <span style={{ color: '#f472b6' }}>F {data.nutrition_advice.macro_targets.fat_g}g</span>
                 </div>
@@ -414,12 +416,12 @@ export default function RecommendationsPage() {
                   {data.workout_plan.weekly_schedule.slice(0, 4).map((d, i) => (
                     <div key={i} style={styles.miniDay}>
                       <span style={{ color: '#38bdf8', fontSize: '11px', fontWeight: 600 }}>{d.day.slice(0, 3)}</span>
-                      <span style={{ color: '#94a3b8', fontSize: '11px' }}>{d.duration_minutes}m</span>
+                      <span style={{ color: 'var(--text-secondary)', fontSize: '11px' }}>{d.duration_minutes}m</span>
                     </div>
                   ))}
                   {data.workout_plan.weekly_schedule.length > 4 && (
                     <div style={styles.miniDay}>
-                      <span style={{ color: '#64748b', fontSize: '11px' }}>+{data.workout_plan.weekly_schedule.length - 4} more</span>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>+{data.workout_plan.weekly_schedule.length - 4} more</span>
                     </div>
                   )}
                 </div>
@@ -539,12 +541,12 @@ export default function RecommendationsPage() {
                   ))}
                 </div>
                 <div style={styles.rationaleBox}>
-                  <strong style={{ color: '#94a3b8' }}>Why this plan? </strong>
-                  <span style={{ color: '#cbd5e1' }}>{data.workout_plan.rationale}</span>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Why this plan? </strong>
+                  <span style={{ color: 'var(--text)' }}>{data.workout_plan.rationale}</span>
                 </div>
                 {data.workout_plan.key_exercises.length > 0 && (
                   <div style={styles.exerciseList}>
-                    <strong style={{ color: '#94a3b8', fontSize: '13px' }}>Key exercises: </strong>
+                    <strong style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Key exercises: </strong>
                     {data.workout_plan.key_exercises.map((ex, i) => (
                       <span key={i} style={styles.exerciseTag}>{ex}</span>
                     ))}
@@ -561,7 +563,7 @@ export default function RecommendationsPage() {
                       <div style={styles.calorieLabel}>daily calories</div>
                     </div>
                     <div>
-                      <MacroRow label="Protein" value={data.nutrition_advice.macro_targets.protein_g} unit="g" color="#4ade80" />
+                      <MacroRow label="Protein" value={data.nutrition_advice.macro_targets.protein_g} unit="g" color="var(--accent)" />
                       <MacroRow label="Carbs" value={data.nutrition_advice.macro_targets.carbs_g} unit="g" color="#38bdf8" />
                       <MacroRow label="Fat" value={data.nutrition_advice.macro_targets.fat_g} unit="g" color="#f472b6" />
                     </div>
@@ -572,7 +574,7 @@ export default function RecommendationsPage() {
                         <Pie data={macroData} dataKey="value" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}>
                           {macroData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                         </Pie>
-                        <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }} />
+                        <Tooltip contentStyle={{ backgroundColor: colors.bgCard, border: `1px solid ${colors.border}`, borderRadius: '8px', color: colors.text }} />
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -593,22 +595,22 @@ export default function RecommendationsPage() {
 
                 <div style={styles.foodLists}>
                   <div>
-                    <h4 style={{ color: '#4ade80', marginBottom: '8px' }}>✅ Focus on</h4>
+                    <h4 style={{ color: 'var(--accent)', marginBottom: '8px' }}>✅ Focus on</h4>
                     <ul style={styles.foodList}>
-                      {data.nutrition_advice.foods_to_focus_on.map((f, i) => <li key={i} style={{ color: '#94a3b8', fontSize: '14px' }}>{f}</li>)}
+                      {data.nutrition_advice.foods_to_focus_on.map((f, i) => <li key={i} style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{f}</li>)}
                     </ul>
                   </div>
                   <div>
                     <h4 style={{ color: '#f87171', marginBottom: '8px' }}>⚠️ Limit</h4>
                     <ul style={styles.foodList}>
-                      {data.nutrition_advice.foods_to_limit.map((f, i) => <li key={i} style={{ color: '#94a3b8', fontSize: '14px' }}>{f}</li>)}
+                      {data.nutrition_advice.foods_to_limit.map((f, i) => <li key={i} style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{f}</li>)}
                     </ul>
                   </div>
                 </div>
 
                 <div style={styles.rationaleBox}>
-                  <strong style={{ color: '#94a3b8' }}>Why this plan? </strong>
-                  <span style={{ color: '#cbd5e1' }}>{data.nutrition_advice.rationale}</span>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Why this plan? </strong>
+                  <span style={{ color: 'var(--text)' }}>{data.nutrition_advice.rationale}</span>
                 </div>
               </section>
             </>
@@ -622,9 +624,9 @@ export default function RecommendationsPage() {
 
 function MacroRow({ label, value, unit, color }: { label: string; value: number; unit: string; color: string }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #0f172a' }}>
-      <span style={{ color: '#94a3b8', fontSize: '14px' }}>{label}</span>
-      <span style={{ color, fontWeight: 600, fontSize: '16px' }}>{value}<span style={{ color: '#64748b', fontSize: '12px', fontWeight: 400 }}> {unit}</span></span>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid var(--bg-input)' }}>
+      <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{label}</span>
+      <span style={{ color, fontWeight: 600, fontSize: '16px' }}>{value}<span style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: 400 }}> {unit}</span></span>
     </div>
   );
 }
@@ -632,97 +634,97 @@ function MacroRow({ label, value, unit, color }: { label: string; value: number;
 const styles: Record<string, React.CSSProperties> = {
   page: { padding: '24px', maxWidth: '1200px', margin: '0 auto' },
   header: { marginBottom: '20px' },
-  title: { color: '#f1f5f9', margin: 0, fontSize: '28px' },
-  subtitle: { color: '#64748b', margin: '4px 0 0', fontSize: '14px' },
+  title: { color: 'var(--text)', margin: 0, fontSize: '28px' },
+  subtitle: { color: 'var(--text-muted)', margin: '4px 0 0', fontSize: '14px' },
   tabs: { display: 'flex', gap: '8px', marginBottom: '24px' },
-  tab: { padding: '10px 20px', backgroundColor: '#1e293b', color: '#94a3b8', border: '1px solid #334155', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 },
-  activeTab: { backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80', borderColor: '#4ade80' },
+  tab: { padding: '10px 20px', backgroundColor: 'var(--bg-card)', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: 600 },
+  activeTab: { backgroundColor: 'rgba(74,222,128,0.1)', color: 'var(--accent)', borderColor: 'var(--accent)' },
 
   // Chat styles
   chatLayout: { display: 'grid', gridTemplateColumns: '1fr 280px', gap: '20px', alignItems: 'start' },
-  chatContainer: { backgroundColor: '#1e293b', borderRadius: '16px', display: 'flex', flexDirection: 'column', height: '600px', overflow: 'hidden' },
+  chatContainer: { backgroundColor: 'var(--bg-card)', borderRadius: '16px', display: 'flex', flexDirection: 'column', height: '600px', overflow: 'hidden' },
   chatMessages: { flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' },
   userMsgRow: { display: 'flex', justifyContent: 'flex-end', gap: '10px', alignItems: 'flex-end' },
   assistantMsgRow: { display: 'flex', justifyContent: 'flex-start', gap: '10px', alignItems: 'flex-end' },
-  avatar: { width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0 },
-  userAvatar: { width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#4ade80', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', flexShrink: 0 },
-  userBubble: { backgroundColor: '#4ade80', color: '#0f172a', padding: '10px 16px', borderRadius: '16px 16px 4px 16px', maxWidth: '75%', fontSize: '14px', lineHeight: '1.5', fontWeight: 500 },
-  assistantBubble: { backgroundColor: '#0f172a', color: '#e2e8f0', padding: '12px 16px', borderRadius: '16px 16px 16px 4px', maxWidth: '75%', fontSize: '14px', lineHeight: '1.6' },
-  typingBubble: { backgroundColor: '#0f172a', padding: '12px 20px', borderRadius: '16px 16px 16px 4px', display: 'flex', gap: '4px', alignItems: 'center' },
-  dot: { color: '#64748b', fontSize: '18px', animation: 'pulse 1s infinite' },
-  chatInputRow: { display: 'flex', gap: '8px', padding: '16px', borderTop: '1px solid #0f172a' },
-  chatInput: { flex: 1, padding: '12px 16px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '12px', color: '#f1f5f9', fontSize: '14px', outline: 'none' },
-  sendBtn: { padding: '12px 18px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '12px', fontWeight: 700, fontSize: '18px', cursor: 'pointer' },
+  avatar: { width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', flexShrink: 0 },
+  userAvatar: { width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', flexShrink: 0 },
+  userBubble: { backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', padding: '10px 16px', borderRadius: '16px 16px 4px 16px', maxWidth: '75%', fontSize: '14px', lineHeight: '1.5', fontWeight: 500 },
+  assistantBubble: { backgroundColor: 'var(--bg-input)', color: 'var(--text)', padding: '12px 16px', borderRadius: '16px 16px 16px 4px', maxWidth: '75%', fontSize: '14px', lineHeight: '1.6' },
+  typingBubble: { backgroundColor: 'var(--bg-input)', padding: '12px 20px', borderRadius: '16px 16px 16px 4px', display: 'flex', gap: '4px', alignItems: 'center' },
+  dot: { color: 'var(--text-muted)', fontSize: '18px', animation: 'pulse 1s infinite' },
+  chatInputRow: { display: 'flex', gap: '8px', padding: '16px', borderTop: '1px solid var(--bg-input)' },
+  chatInput: { flex: 1, padding: '12px 16px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text)', fontSize: '14px', outline: 'none' },
+  sendBtn: { padding: '12px 18px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '12px', fontWeight: 700, fontSize: '18px', cursor: 'pointer' },
 
   regenBanner: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', padding: '12px 16px', backgroundColor: 'rgba(74,222,128,0.08)', borderTop: '1px solid rgba(74,222,128,0.2)' },
-  regenText: { color: '#94a3b8', fontSize: '13px', flex: 1 },
-  regenBtn: { padding: '8px 16px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 },
-  miniPlanBox: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' },
+  regenText: { color: 'var(--text-secondary)', fontSize: '13px', flex: 1 },
+  regenBtn: { padding: '8px 16px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 },
+  miniPlanBox: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' },
   miniPlanItem: { display: 'flex', alignItems: 'baseline', gap: '4px' },
   miniMacros: { display: 'flex', gap: '10px', fontSize: '13px', fontWeight: 600 },
   miniWorkouts: { display: 'flex', gap: '6px', flexWrap: 'wrap' },
-  miniDay: { backgroundColor: '#0f172a', borderRadius: '6px', padding: '4px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px' },
-  viewPlanBtn: { padding: '6px 12px', backgroundColor: 'transparent', color: '#4ade80', border: '1px solid rgba(74,222,128,0.3)', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', textAlign: 'center', marginTop: '2px' },
+  miniDay: { backgroundColor: 'var(--bg-input)', borderRadius: '6px', padding: '4px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1px' },
+  viewPlanBtn: { padding: '6px 12px', backgroundColor: 'transparent', color: 'var(--accent)', border: '1px solid rgba(74,222,128,0.3)', borderRadius: '6px', fontSize: '12px', cursor: 'pointer', textAlign: 'center', marginTop: '2px' },
   quickPanel: { display: 'flex', flexDirection: 'column', gap: '16px' },
-  quickTitle: { color: '#94a3b8', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 },
+  quickTitle: { color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', margin: 0 },
   quickList: { display: 'flex', flexDirection: 'column', gap: '6px' },
-  quickBtn: { padding: '10px 14px', backgroundColor: '#1e293b', color: '#cbd5e1', border: '1px solid #334155', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', textAlign: 'left', lineHeight: '1.4', transition: 'all 0.2s' },
-  tipsBox: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '16px' },
-  tipsTitle: { color: '#94a3b8', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 8px' },
-  tipsList: { paddingLeft: '16px', margin: 0, display: 'flex', flexDirection: 'column', gap: '6px', color: '#64748b', fontSize: '13px' },
+  quickBtn: { padding: '10px 14px', backgroundColor: 'var(--bg-card)', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', textAlign: 'left', lineHeight: '1.4', transition: 'all 0.2s' },
+  tipsBox: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '16px' },
+  tipsTitle: { color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 8px' },
+  tipsList: { paddingLeft: '16px', margin: 0, display: 'flex', flexDirection: 'column', gap: '6px', color: 'var(--text-muted)', fontSize: '13px' },
 
   // Plan styles
   defaultBanner: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', padding: '16px 20px', backgroundColor: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.25)', borderRadius: '12px', marginBottom: '20px', flexWrap: 'wrap' },
   defaultBannerLeft: { display: 'flex', alignItems: 'center', gap: '12px', flex: 1, flexWrap: 'wrap' },
-  defaultBadge: { backgroundColor: '#1e293b', color: '#38bdf8', padding: '4px 12px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, border: '1px solid rgba(56,189,248,0.3)', whiteSpace: 'nowrap' },
-  defaultBannerText: { color: '#94a3b8', fontSize: '14px' },
-  personalizeBtn: { padding: '10px 20px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 },
-  generateBtn: { padding: '12px 24px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '15px', cursor: 'pointer' },
-  refreshBtn: { padding: '12px 20px', backgroundColor: 'transparent', color: '#94a3b8', border: '1px solid #334155', borderRadius: '10px', fontSize: '14px', cursor: 'pointer' },
-  exportDivider: { width: '1px', height: '28px', backgroundColor: '#334155', margin: '0 4px' },
-  exportBtn: { padding: '8px 14px', backgroundColor: '#1e293b', color: '#94a3b8', border: '1px solid #334155', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' },
-  copyToast: { color: '#4ade80', fontSize: '13px', fontWeight: 600 },
+  defaultBadge: { backgroundColor: 'var(--bg-card)', color: '#38bdf8', padding: '4px 12px', borderRadius: '12px', fontSize: '13px', fontWeight: 600, border: '1px solid rgba(56,189,248,0.3)', whiteSpace: 'nowrap' },
+  defaultBannerText: { color: 'var(--text-secondary)', fontSize: '14px' },
+  personalizeBtn: { padding: '10px 20px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 },
+  generateBtn: { padding: '12px 24px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '15px', cursor: 'pointer' },
+  refreshBtn: { padding: '12px 20px', backgroundColor: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderRadius: '10px', fontSize: '14px', cursor: 'pointer' },
+  exportDivider: { width: '1px', height: '28px', backgroundColor: 'var(--border)', margin: '0 4px' },
+  exportBtn: { padding: '8px 14px', backgroundColor: 'var(--bg-card)', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' },
+  copyToast: { color: 'var(--accent)', fontSize: '13px', fontWeight: 600 },
   error: { backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#fca5a5', padding: '12px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
   warningBox: { backgroundColor: 'rgba(251,146,60,0.1)', border: '1px solid #fb923c', color: '#fdba74', padding: '14px 18px', borderRadius: '10px', marginBottom: '20px' },
   warningItem: { marginTop: '4px', fontSize: '14px' },
   metaBar: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' },
-  cachedBadge: { backgroundColor: '#1e293b', color: '#94a3b8', padding: '4px 10px', borderRadius: '12px', fontSize: '12px', border: '1px solid #334155' },
-  freshBadge: { backgroundColor: 'rgba(74,222,128,0.1)', color: '#4ade80', padding: '4px 10px', borderRadius: '12px', fontSize: '12px', border: '1px solid #4ade80' },
-  metaText: { color: '#475569', fontSize: '12px' },
-  loadingCard: { backgroundColor: '#1e293b', borderRadius: '16px', padding: '60px', textAlign: 'center', marginBottom: '20px' },
+  cachedBadge: { backgroundColor: 'var(--bg-card)', color: 'var(--text-secondary)', padding: '4px 10px', borderRadius: '12px', fontSize: '12px', border: '1px solid var(--border)' },
+  freshBadge: { backgroundColor: 'rgba(74,222,128,0.1)', color: 'var(--accent)', padding: '4px 10px', borderRadius: '12px', fontSize: '12px', border: '1px solid var(--accent)' },
+  metaText: { color: 'var(--text-dim)', fontSize: '12px' },
+  loadingCard: { backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '60px', textAlign: 'center', marginBottom: '20px' },
   loadingSpinner: { fontSize: '48px', marginBottom: '16px' },
-  loadingText: { color: '#f1f5f9', fontSize: '18px', fontWeight: 600 },
-  loadingSubtext: { color: '#64748b', fontSize: '14px', marginTop: '8px' },
+  loadingText: { color: 'var(--text)', fontSize: '18px', fontWeight: 600 },
+  loadingSubtext: { color: 'var(--text-muted)', fontSize: '14px', marginTop: '8px' },
   section: { marginBottom: '32px' },
-  sectionTitle: { color: '#f1f5f9', fontSize: '20px', marginBottom: '16px' },
-  subTitle: { color: '#94a3b8', fontSize: '14px', fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.5px', marginBottom: '12px' },
+  sectionTitle: { color: 'var(--text)', fontSize: '20px', marginBottom: '16px' },
+  subTitle: { color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.5px', marginBottom: '12px' },
   insightGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' },
-  insightCard: { backgroundColor: '#1e293b', borderRadius: '10px', padding: '14px 18px', display: 'flex', gap: '12px', alignItems: 'flex-start' },
-  insightNum: { backgroundColor: '#38bdf8', color: '#0f172a', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, flexShrink: 0 },
-  insightText: { color: '#cbd5e1', fontSize: '14px', lineHeight: '1.5' },
+  insightCard: { backgroundColor: 'var(--bg-card)', borderRadius: '10px', padding: '14px 18px', display: 'flex', gap: '12px', alignItems: 'flex-start' },
+  insightNum: { backgroundColor: '#38bdf8', color: 'var(--accent-dark)', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, flexShrink: 0 },
+  insightText: { color: 'var(--text)', fontSize: '14px', lineHeight: '1.5' },
   weekGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px', marginBottom: '16px' },
-  dayCard: { backgroundColor: '#1e293b', borderRadius: '10px', padding: '14px', textAlign: 'center' },
+  dayCard: { backgroundColor: 'var(--bg-card)', borderRadius: '10px', padding: '14px', textAlign: 'center' },
   dayLabel: { color: '#38bdf8', fontWeight: 700, fontSize: '13px', marginBottom: '6px' },
-  dayWorkout: { color: '#f1f5f9', fontSize: '13px', marginBottom: '6px', lineHeight: '1.4' },
-  dayMeta: { color: '#64748b', fontSize: '11px' },
-  rationaleBox: { backgroundColor: '#1e293b', borderRadius: '10px', padding: '14px 18px', marginTop: '12px', fontSize: '14px', lineHeight: '1.6' },
+  dayWorkout: { color: 'var(--text)', fontSize: '13px', marginBottom: '6px', lineHeight: '1.4' },
+  dayMeta: { color: 'var(--text-muted)', fontSize: '11px' },
+  rationaleBox: { backgroundColor: 'var(--bg-card)', borderRadius: '10px', padding: '14px 18px', marginTop: '12px', fontSize: '14px', lineHeight: '1.6' },
   exerciseList: { display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px', alignItems: 'center' },
-  exerciseTag: { backgroundColor: '#0f172a', color: '#a78bfa', padding: '4px 10px', borderRadius: '12px', fontSize: '12px', border: '1px solid #312e81' },
+  exerciseTag: { backgroundColor: 'var(--bg-input)', color: '#a78bfa', padding: '4px 10px', borderRadius: '12px', fontSize: '12px', border: '1px solid #312e81' },
   nutritionLayout: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' },
-  nutritionLeft: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '20px' },
-  calorieTarget: { textAlign: 'center', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #0f172a' },
-  calorieNum: { color: '#f1f5f9', fontSize: '42px', fontWeight: 700 },
-  calorieLabel: { color: '#64748b', fontSize: '13px' },
-  pieWrapper: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '10px' },
+  nutritionLeft: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '20px' },
+  calorieTarget: { textAlign: 'center', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--bg-input)' },
+  calorieNum: { color: 'var(--text)', fontSize: '42px', fontWeight: 700 },
+  calorieLabel: { color: 'var(--text-muted)', fontSize: '13px' },
+  pieWrapper: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '10px' },
   mealGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px' },
-  mealCard: { backgroundColor: '#1e293b', borderRadius: '10px', padding: '14px' },
+  mealCard: { backgroundColor: 'var(--bg-card)', borderRadius: '10px', padding: '14px' },
   mealName: { color: '#38bdf8', fontWeight: 600, fontSize: '13px', marginBottom: '4px' },
-  mealExample: { color: '#cbd5e1', fontSize: '13px', marginBottom: '6px' },
+  mealExample: { color: 'var(--text)', fontSize: '13px', marginBottom: '6px' },
   mealCal: { color: '#fb923c', fontSize: '12px' },
   foodLists: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' },
   foodList: { paddingLeft: '16px', margin: 0 },
-  emptyState: { backgroundColor: '#1e293b', borderRadius: '16px', padding: '60px 40px', textAlign: 'center', marginTop: '20px' },
+  emptyState: { backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '60px 40px', textAlign: 'center', marginTop: '20px' },
   emptyIcon: { fontSize: '64px', marginBottom: '16px' },
-  emptyTitle: { color: '#f1f5f9', fontSize: '22px', marginBottom: '12px' },
-  emptyText: { color: '#64748b', fontSize: '15px', maxWidth: '500px', margin: '0 auto', lineHeight: '1.6' },
+  emptyTitle: { color: 'var(--text)', fontSize: '22px', marginBottom: '12px' },
+  emptyText: { color: 'var(--text-muted)', fontSize: '15px', maxWidth: '500px', margin: '0 auto', lineHeight: '1.6' },
 };

@@ -1,5 +1,6 @@
 import { useState, useEffect, FormEvent } from 'react';
-import { updateMe } from '../api/users';
+import { useNavigate } from 'react-router-dom';
+import { updateMe, exportMyData, deleteMyAccount } from '../api/users';
 import { useAuth } from '../context/AuthContext';
 
 const FITNESS_GOALS = [
@@ -20,7 +21,8 @@ const HEALTH_CONDITIONS_OPTIONS = ['Diabetes', 'Hypertension', 'Heart Disease', 
 const DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Lactose Intolerant', 'Keto', 'None'];
 
 export default function ProfilePage() {
-  const { user, setUser } = useAuth();
+  const { user, setUser, logout } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: '',
     age: '',
@@ -94,7 +96,7 @@ export default function ProfilePage() {
     : null;
   const bmiCategory = bmi
     ? Number(bmi) < 18.5 ? { label: 'Underweight', color: '#38bdf8' }
-    : Number(bmi) < 25 ? { label: 'Normal', color: '#4ade80' }
+    : Number(bmi) < 25 ? { label: 'Normal', color: 'var(--accent)' }
     : Number(bmi) < 30 ? { label: 'Overweight', color: '#fb923c' }
     : { label: 'Obese', color: '#ef4444' }
     : null;
@@ -213,7 +215,75 @@ export default function ProfilePage() {
           {loading ? 'Saving...' : '💾 Save Profile'}
         </button>
       </form>
+
+      <DangerZone logout={logout} navigate={navigate} />
     </div>
+  );
+}
+
+function DangerZone({ logout, navigate }: { logout: () => void; navigate: (p: string) => void }) {
+  const [working, setWorking] = useState<'' | 'export' | 'delete'>('');
+  const [err, setErr] = useState('');
+
+  const handleExport = async () => {
+    setErr(''); setWorking('export');
+    try {
+      const data = await exportMyData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `healthai-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e: any) {
+      setErr(e.response?.data?.detail || 'Export failed.');
+    } finally {
+      setWorking('');
+    }
+  };
+
+  const handleDelete = async () => {
+    const typed = window.prompt(
+      'This will permanently delete your account and all logged data. Type DELETE to confirm.'
+    );
+    if (typed !== 'DELETE') return;
+    setErr(''); setWorking('delete');
+    try {
+      await deleteMyAccount();
+      logout();
+      navigate('/login');
+    } catch (e: any) {
+      setErr(e.response?.data?.detail || 'Delete failed.');
+      setWorking('');
+    }
+  };
+
+  return (
+    <section style={{ ...styles.section, marginTop: '24px', borderTop: '2px solid #ef4444' }}>
+      <h2 style={{ ...styles.sectionTitle, color: '#ef4444' }}>Your Data</h2>
+      {err && <div style={styles.error}>{err}</div>}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ color: 'var(--text)', fontWeight: 600, fontSize: '14px' }}>Export my data</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Download a JSON file with everything you've logged.</div>
+          </div>
+          <button type="button" onClick={handleExport} disabled={working === 'export'} style={styles.secondaryBtn}>
+            {working === 'export' ? 'Exporting...' : 'Export'}
+          </button>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ color: '#ef4444', fontWeight: 600, fontSize: '14px' }}>Delete my account</div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Permanently removes your profile and every record tied to it.</div>
+          </div>
+          <button type="button" onClick={handleDelete} disabled={working === 'delete'} style={styles.deleteBtn}>
+            {working === 'delete' ? 'Deleting...' : 'Delete'}
+          </button>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -222,30 +292,32 @@ function Field({ label, type = 'text', value, onChange, placeholder, required }:
 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-      <label style={{ color: '#94a3b8', fontSize: '13px', fontWeight: 500 }}>{label}</label>
+      <label style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} required={required}
-        style={{ padding: '10px 14px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '8px', color: '#f1f5f9', fontSize: '14px', outline: 'none' }} />
+        style={{ padding: '10px 14px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text)', fontSize: '14px', outline: 'none' }} />
     </div>
   );
 }
 
 const styles: Record<string, React.CSSProperties> = {
   page: { padding: '24px', maxWidth: '900px', margin: '0 auto' },
-  title: { color: '#f1f5f9', marginBottom: '4px' },
-  subtitle: { color: '#64748b', fontSize: '14px', marginBottom: '24px' },
-  success: { backgroundColor: 'rgba(74,222,128,0.1)', border: '1px solid #4ade80', color: '#4ade80', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
+  title: { color: 'var(--text)', marginBottom: '4px' },
+  subtitle: { color: 'var(--text-muted)', fontSize: '14px', marginBottom: '24px' },
+  success: { backgroundColor: 'rgba(74,222,128,0.1)', border: '1px solid var(--accent)', color: 'var(--accent)', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
   error: { backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#fca5a5', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
   formWrapper: { display: 'flex', flexDirection: 'column', gap: '24px' },
-  section: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '24px' },
-  sectionTitle: { color: '#f1f5f9', margin: '0 0 16px', fontSize: '17px' },
+  section: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '24px' },
+  sectionTitle: { color: 'var(--text)', margin: '0 0 16px', fontSize: '17px' },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' },
-  label: { color: '#94a3b8', fontSize: '13px', fontWeight: 500, display: 'block', marginBottom: '8px' },
-  select: { padding: '10px 14px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '8px', color: '#f1f5f9', fontSize: '14px', width: '100%' },
-  bmiCard: { backgroundColor: '#0f172a', borderRadius: '10px', padding: '14px', textAlign: 'center' },
-  bmiLabel: { color: '#64748b', fontSize: '12px', marginBottom: '4px' },
+  label: { color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500, display: 'block', marginBottom: '8px' },
+  select: { padding: '10px 14px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text)', fontSize: '14px', width: '100%' },
+  bmiCard: { backgroundColor: 'var(--bg-input)', borderRadius: '10px', padding: '14px', textAlign: 'center' },
+  bmiLabel: { color: 'var(--text-muted)', fontSize: '12px', marginBottom: '4px' },
   choiceGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' },
   chips: { display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' },
-  chip: { padding: '8px 14px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '20px', color: '#94a3b8', cursor: 'pointer', fontSize: '13px', transition: 'all 0.2s' },
-  activeChip: { backgroundColor: 'rgba(74,222,128,0.1)', borderColor: '#4ade80', color: '#4ade80' },
-  saveBtn: { padding: '14px 32px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '16px', cursor: 'pointer', alignSelf: 'flex-start' },
+  chip: { padding: '8px 14px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '20px', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '13px', transition: 'all 0.2s' },
+  activeChip: { backgroundColor: 'rgba(74,222,128,0.1)', borderColor: 'var(--accent)', color: 'var(--accent)' },
+  saveBtn: { padding: '14px 32px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '16px', cursor: 'pointer', alignSelf: 'flex-start' },
+  secondaryBtn: { padding: '10px 20px', backgroundColor: 'transparent', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: '8px', fontWeight: 600, fontSize: '13px', cursor: 'pointer' },
+  deleteBtn: { padding: '10px 20px', backgroundColor: '#ef4444', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '13px', cursor: 'pointer' },
 };

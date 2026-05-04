@@ -1,0 +1,5 @@
+backend/venv/
+backend/health_fitness.db
+backend/**/__pycache__/
+backend/**/*.pyc
+node_modules/

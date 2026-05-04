@@ -38,7 +38,7 @@ const QUALITY_COLORS: Record<string, string> = {
   Poor: '#ef4444',
   Fair: '#fb923c',
   Good: '#facc15',
-  Great: '#4ade80',
+  Great: 'var(--accent)',
   Excellent: '#22d3ee',
 };
 
@@ -143,7 +143,7 @@ export default function FoodScanPage() {
     setCorrection('');
   };
 
-  const qualityColor = analysis ? (QUALITY_COLORS[analysis.meal_quality_label] || '#94a3b8') : '#94a3b8';
+  const qualityColor = analysis ? (QUALITY_COLORS[analysis.meal_quality_label] || 'var(--text-secondary)') : 'var(--text-secondary)';
 
   return (
     <div style={styles.page}>
@@ -292,7 +292,7 @@ export default function FoodScanPage() {
           {/* Calories & Macros */}
           <div style={styles.macroCards}>
             <MacroCard label="Calories" value={analysis.estimated_calories} unit="kcal" color="#fb923c" big />
-            <MacroCard label="Protein" value={analysis.macros.protein_g} unit="g" color="#4ade80" />
+            <MacroCard label="Protein" value={analysis.macros.protein_g} unit="g" color="var(--accent)" />
             <MacroCard label="Carbs" value={analysis.macros.carbs_g} unit="g" color="#38bdf8" />
             <MacroCard label="Fat" value={analysis.macros.fat_g} unit="g" color="#f472b6" />
             <MacroCard label="Fiber" value={analysis.macros.fiber_g} unit="g" color="#a78bfa" />
@@ -308,7 +308,7 @@ export default function FoodScanPage() {
                     <span style={styles.breakdownName}>{item.item}</span>
                     <div style={styles.breakdownRight}>
                       <span style={{ color: '#fb923c' }}>{item.calories} kcal</span>
-                      {item.protein_g != null && <span style={{ color: '#4ade80' }}>{item.protein_g}g protein</span>}
+                      {item.protein_g != null && <span style={{ color: 'var(--accent)' }}>{item.protein_g}g protein</span>}
                     </div>
                   </div>
                 ))}
@@ -345,7 +345,7 @@ export default function FoodScanPage() {
           <div style={styles.feedbackRow}>
             {analysis.positives.length > 0 && (
               <div style={styles.feedbackCard}>
-                <h4 style={{ color: '#4ade80', margin: '0 0 10px' }}>What's Good</h4>
+                <h4 style={{ color: 'var(--accent)', margin: '0 0 10px' }}>What's Good</h4>
                 <ul style={styles.feedbackList}>
                   {analysis.positives.map((p, i) => <li key={i}>{p}</li>)}
                 </ul>
@@ -391,88 +391,88 @@ function MacroCard({ label, value, unit, color, big }: { label: string; value: n
 const styles: Record<string, React.CSSProperties> = {
   page: { padding: '24px', maxWidth: '1000px', margin: '0 auto' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' },
-  title: { color: '#f1f5f9', margin: 0, fontSize: '28px' },
-  subtitle: { color: '#64748b', margin: '4px 0 0', fontSize: '14px' },
-  resetBtn: { padding: '10px 20px', backgroundColor: '#1e293b', color: '#94a3b8', border: '1px solid #334155', borderRadius: '8px', cursor: 'pointer', fontSize: '14px' },
+  title: { color: 'var(--text)', margin: 0, fontSize: '28px' },
+  subtitle: { color: 'var(--text-muted)', margin: '4px 0 0', fontSize: '14px' },
+  resetBtn: { padding: '10px 20px', backgroundColor: 'var(--bg-card)', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderRadius: '8px', cursor: 'pointer', fontSize: '14px' },
 
   // Upload
-  dropZone: { backgroundColor: '#1e293b', borderRadius: '16px', border: '2px dashed #334155', padding: '48px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', cursor: 'pointer', transition: 'border-color 0.2s' },
+  dropZone: { backgroundColor: 'var(--bg-card)', borderRadius: '16px', border: '2px dashed var(--border)', padding: '48px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', cursor: 'pointer', transition: 'border-color 0.2s' },
   uploadIcon: { fontSize: '64px' },
-  dropTitle: { color: '#f1f5f9', margin: 0, fontSize: '20px' },
-  dropText: { color: '#64748b', margin: 0, fontSize: '14px' },
+  dropTitle: { color: 'var(--text)', margin: 0, fontSize: '20px' },
+  dropText: { color: 'var(--text-muted)', margin: 0, fontSize: '14px' },
   previewImg: { maxHeight: '200px', borderRadius: '12px', objectFit: 'cover' },
   uploadBtns: { display: 'flex', gap: '12px', marginTop: '8px' },
-  uploadBtn: { padding: '12px 24px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '15px', cursor: 'pointer' },
-  cameraBtn: { padding: '12px 24px', backgroundColor: '#38bdf8', color: '#0f172a', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '15px', cursor: 'pointer' },
+  uploadBtn: { padding: '12px 24px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '15px', cursor: 'pointer' },
+  cameraBtn: { padding: '12px 24px', backgroundColor: '#38bdf8', color: 'var(--accent-dark)', border: 'none', borderRadius: '10px', fontWeight: 700, fontSize: '15px', cursor: 'pointer' },
 
   error: { backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#fca5a5', padding: '12px 16px', borderRadius: '8px', marginTop: '16px', fontSize: '14px' },
 
   // Loading
-  loadingCard: { display: 'flex', gap: '24px', backgroundColor: '#1e293b', borderRadius: '16px', padding: '32px', marginTop: '20px', alignItems: 'center' },
+  loadingCard: { display: 'flex', gap: '24px', backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '32px', marginTop: '20px', alignItems: 'center' },
   loadingImg: { width: '150px', height: '150px', borderRadius: '12px', objectFit: 'cover', flexShrink: 0 },
   loadingContent: { display: 'flex', flexDirection: 'column', gap: '8px' },
   spinner: { fontSize: '40px' },
-  loadingText: { color: '#f1f5f9', fontSize: '18px', fontWeight: 600 },
-  loadingSubtext: { color: '#64748b', fontSize: '14px' },
+  loadingText: { color: 'var(--text)', fontSize: '18px', fontWeight: 600 },
+  loadingSubtext: { color: 'var(--text-muted)', fontSize: '14px' },
 
   // Results
   results: { display: 'flex', flexDirection: 'column', gap: '20px' },
   topRow: { display: 'grid', gridTemplateColumns: '280px 1fr', gap: '20px', alignItems: 'start' },
   resultImgWrapper: { borderRadius: '16px', overflow: 'hidden' },
   resultImg: { width: '100%', height: '280px', objectFit: 'cover', display: 'block' },
-  summaryCard: { backgroundColor: '#1e293b', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '8px' },
-  foodName: { color: '#f1f5f9', margin: 0, fontSize: '24px' },
-  description: { color: '#94a3b8', margin: 0, fontSize: '14px', lineHeight: '1.5' },
-  portion: { color: '#64748b', fontSize: '13px', margin: 0 },
+  summaryCard: { backgroundColor: 'var(--bg-card)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '8px' },
+  foodName: { color: 'var(--text)', margin: 0, fontSize: '24px' },
+  description: { color: 'var(--text-secondary)', margin: 0, fontSize: '14px', lineHeight: '1.5' },
+  portion: { color: 'var(--text-muted)', fontSize: '13px', margin: 0 },
 
-  correctToggle: { padding: '6px 12px', backgroundColor: 'transparent', color: '#64748b', border: '1px dashed #334155', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', alignSelf: 'flex-start', marginTop: '4px' },
-  correctionBox: { backgroundColor: '#0f172a', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' },
-  correctionLabel: { color: '#94a3b8', fontSize: '12px', fontWeight: 500 },
-  correctionInput: { padding: '10px 14px', backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px', color: '#f1f5f9', fontSize: '14px', outline: 'none', width: '100%' },
+  correctToggle: { padding: '6px 12px', backgroundColor: 'transparent', color: 'var(--text-muted)', border: '1px dashed var(--border)', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', alignSelf: 'flex-start', marginTop: '4px' },
+  correctionBox: { backgroundColor: 'var(--bg-input)', borderRadius: '10px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' },
+  correctionLabel: { color: 'var(--text-secondary)', fontSize: '12px', fontWeight: 500 },
+  correctionInput: { padding: '10px 14px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text)', fontSize: '14px', outline: 'none', width: '100%' },
   correctionBtns: { display: 'flex', gap: '8px' },
-  correctionSubmit: { padding: '8px 16px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '13px', cursor: 'pointer' },
-  correctionCancel: { padding: '8px 16px', backgroundColor: 'transparent', color: '#64748b', border: '1px solid #334155', borderRadius: '8px', fontSize: '13px', cursor: 'pointer' },
+  correctionSubmit: { padding: '8px 16px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '13px', cursor: 'pointer' },
+  correctionCancel: { padding: '8px 16px', backgroundColor: 'transparent', color: 'var(--text-muted)', border: '1px solid var(--border)', borderRadius: '8px', fontSize: '13px', cursor: 'pointer' },
   qualityRow: { display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' },
   qualityBadge: { border: '2px solid', borderRadius: '12px', padding: '8px 14px', fontWeight: 700, fontSize: '18px' },
   qualityScore: { fontSize: '24px' },
 
-  logSection: { marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #0f172a' },
-  logLabel: { color: '#64748b', fontSize: '13px' },
+  logSection: { marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--bg-input)' },
+  logLabel: { color: 'var(--text-muted)', fontSize: '13px' },
   logBtns: { display: 'flex', gap: '8px', marginTop: '6px', flexWrap: 'wrap' },
-  logBtn: { padding: '6px 14px', backgroundColor: '#0f172a', color: '#4ade80', border: '1px solid rgba(74,222,128,0.3)', borderRadius: '8px', fontSize: '13px', cursor: 'pointer' },
-  logSuccess: { color: '#4ade80', fontSize: '14px', fontWeight: 600 },
+  logBtn: { padding: '6px 14px', backgroundColor: 'var(--bg-input)', color: 'var(--accent)', border: '1px solid rgba(74,222,128,0.3)', borderRadius: '8px', fontSize: '13px', cursor: 'pointer' },
+  logSuccess: { color: 'var(--accent)', fontSize: '14px', fontWeight: 600 },
 
   // Macros
   macroCards: { display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' },
-  macroCard: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '16px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '2px' },
-  macroLabel: { color: '#64748b', fontSize: '12px', fontWeight: 500 },
-  macroUnit: { color: '#475569', fontSize: '12px' },
+  macroCard: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '16px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '2px' },
+  macroLabel: { color: 'var(--text-muted)', fontSize: '12px', fontWeight: 500 },
+  macroUnit: { color: 'var(--text-dim)', fontSize: '12px' },
 
   // Breakdown
-  section: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '20px' },
-  sectionTitle: { color: '#94a3b8', fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 12px' },
+  section: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '20px' },
+  sectionTitle: { color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 12px' },
   breakdownList: { display: 'flex', flexDirection: 'column', gap: '6px' },
-  breakdownItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', backgroundColor: '#0f172a', borderRadius: '8px' },
-  breakdownName: { color: '#e2e8f0', fontSize: '14px' },
+  breakdownItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', backgroundColor: 'var(--bg-input)', borderRadius: '8px' },
+  breakdownName: { color: 'var(--text)', fontSize: '14px' },
   breakdownRight: { display: 'flex', gap: '16px', fontSize: '13px' },
 
   // Swaps
   swapGrid: { display: 'flex', flexDirection: 'column', gap: '10px' },
-  swapCard: { display: 'grid', gridTemplateColumns: '1fr auto 1fr auto', gap: '12px', alignItems: 'center', padding: '14px', backgroundColor: '#0f172a', borderRadius: '10px' },
+  swapCard: { display: 'grid', gridTemplateColumns: '1fr auto 1fr auto', gap: '12px', alignItems: 'center', padding: '14px', backgroundColor: 'var(--bg-input)', borderRadius: '10px' },
   swapFrom: { display: 'flex', flexDirection: 'column', gap: '2px' },
   swapTo: { display: 'flex', flexDirection: 'column', gap: '2px' },
-  swapLabel: { color: '#475569', fontSize: '11px', textTransform: 'uppercase' },
+  swapLabel: { color: 'var(--text-dim)', fontSize: '11px', textTransform: 'uppercase' },
   swapCurrent: { color: '#f87171', fontSize: '14px' },
-  swapArrow: { color: '#4ade80', fontSize: '20px', fontWeight: 700 },
-  swapNew: { color: '#4ade80', fontSize: '14px', fontWeight: 600 },
-  swapSave: { color: '#4ade80', fontSize: '12px', fontWeight: 600, backgroundColor: 'rgba(74,222,128,0.1)', padding: '4px 10px', borderRadius: '12px', whiteSpace: 'nowrap' },
+  swapArrow: { color: 'var(--accent)', fontSize: '20px', fontWeight: 700 },
+  swapNew: { color: 'var(--accent)', fontSize: '14px', fontWeight: 600 },
+  swapSave: { color: 'var(--accent)', fontSize: '12px', fontWeight: 600, backgroundColor: 'rgba(74,222,128,0.1)', padding: '4px 10px', borderRadius: '12px', whiteSpace: 'nowrap' },
 
   // Feedback
   feedbackRow: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' },
-  feedbackCard: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '20px' },
-  feedbackList: { paddingLeft: '16px', margin: 0, display: 'flex', flexDirection: 'column', gap: '6px', color: '#94a3b8', fontSize: '14px' },
+  feedbackCard: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '20px' },
+  feedbackList: { paddingLeft: '16px', margin: 0, display: 'flex', flexDirection: 'column', gap: '6px', color: 'var(--text-secondary)', fontSize: '14px' },
 
   // Vitamins
   vitaminChips: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
-  vitaminChip: { padding: '6px 14px', backgroundColor: '#0f172a', color: '#a78bfa', borderRadius: '20px', fontSize: '13px', border: '1px solid rgba(167,139,250,0.3)' },
+  vitaminChip: { padding: '6px 14px', backgroundColor: 'var(--bg-input)', color: '#a78bfa', borderRadius: '20px', fontSize: '13px', border: '1px solid rgba(167,139,250,0.3)' },
 };

@@ -7,7 +7,7 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
   if (isLoading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <div style={{ color: '#4ade80', fontSize: '18px' }}>Loading...</div>
+        <div style={{ color: 'var(--accent)', fontSize: '18px' }}>Loading...</div>
       </div>
     );
   }

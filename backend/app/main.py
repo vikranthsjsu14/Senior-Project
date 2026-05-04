@@ -1,9 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
 
 from .database import create_db_and_tables
-from .routers import auth, users, health_metrics, activities, nutrition, goals, dashboard, wearable, recommendations, chat, food_scan
+from .limiter import limiter
+from .routers import auth, users, health_metrics, activities, nutrition, goals, dashboard, wearable, recommendations, chat, food_scan, exercise_review
 
 # Import all models so SQLModel registers them before create_all
 from .models import user, health_metrics as hm_model, activity, nutrition as nut_model, goals as goals_model, ai_recommendation  # noqa: F401
@@ -21,6 +24,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -41,6 +47,7 @@ app.include_router(wearable.router)
 app.include_router(recommendations.router)
 app.include_router(chat.router)
 app.include_router(food_scan.router)
+app.include_router(exercise_review.router)
 
 
 @app.get("/")

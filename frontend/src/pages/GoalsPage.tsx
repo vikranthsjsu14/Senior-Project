@@ -123,7 +123,7 @@ export default function GoalsPage() {
                 </div>
                 <div style={styles.goalStats}>
                   <span style={styles.goalPct}>{pct}%</span>
-                  <span style={{ color: '#64748b', fontSize: '13px' }}>{g.current_value} / {g.target_value} {g.unit}</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{g.current_value} / {g.target_value} {g.unit}</span>
                 </div>
                 <div style={styles.updateRow}>
                   <input
@@ -134,7 +134,7 @@ export default function GoalsPage() {
                     style={styles.updateInput}
                     placeholder="Update progress"
                   />
-                  <span style={{ color: '#64748b', fontSize: '13px' }}>{g.unit}</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{g.unit}</span>
                 </div>
               </div>
             );
@@ -149,12 +149,12 @@ export default function GoalsPage() {
             {completed.map((g) => {
               const meta = goalMeta(g.type);
               return (
-                <div key={g.id} style={{ ...styles.goalCard, opacity: 0.7, borderTop: '3px solid #4ade80' }}>
+                <div key={g.id} style={{ ...styles.goalCard, opacity: 0.7, borderTop: '3px solid var(--accent)' }}>
                   <div style={styles.goalTop}>
                     <span style={styles.goalIcon}>{meta?.icon}</span>
                     <div>
                       <div style={styles.goalName}>{g.description || meta?.label}</div>
-                      <div style={{ color: '#4ade80', fontSize: '12px' }}>Completed!</div>
+                      <div style={{ color: 'var(--accent)', fontSize: '12px' }}>Completed!</div>
                     </div>
                     <button onClick={() => handleDelete(g.id)} style={styles.deleteBtn}>✕</button>
                   </div>
@@ -173,9 +173,9 @@ function Field({ label, type = 'text', value, onChange, placeholder, required }:
 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-      <label style={{ color: '#94a3b8', fontSize: '13px', fontWeight: 500 }}>{label}</label>
+      <label style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} required={required}
-        style={{ padding: '10px 14px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '8px', color: '#f1f5f9', fontSize: '14px', outline: 'none' }} />
+        style={{ padding: '10px 14px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text)', fontSize: '14px', outline: 'none' }} />
     </div>
   );
 }
@@ -183,29 +183,29 @@ function Field({ label, type = 'text', value, onChange, placeholder, required }:
 const styles: Record<string, React.CSSProperties> = {
   page: { padding: '24px', maxWidth: '1000px', margin: '0 auto' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' },
-  title: { color: '#f1f5f9', margin: 0 },
-  addBtn: { padding: '10px 20px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' },
-  sectionTitle: { color: '#94a3b8', fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' },
-  form: { backgroundColor: '#1e293b', padding: '24px', borderRadius: '12px', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' },
-  formTitle: { color: '#f1f5f9', margin: 0 },
+  title: { color: 'var(--text)', margin: 0 },
+  addBtn: { padding: '10px 20px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' },
+  sectionTitle: { color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' },
+  form: { backgroundColor: 'var(--bg-card)', padding: '24px', borderRadius: '12px', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' },
+  formTitle: { color: 'var(--text)', margin: 0 },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' },
-  label: { color: '#94a3b8', fontSize: '13px', fontWeight: 500 },
-  select: { padding: '10px 14px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '8px', color: '#f1f5f9', fontSize: '14px' },
-  btn: { padding: '11px 22px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', alignSelf: 'flex-start' },
-  success: { backgroundColor: 'rgba(74,222,128,0.1)', border: '1px solid #4ade80', color: '#4ade80', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
+  label: { color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 },
+  select: { padding: '10px 14px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text)', fontSize: '14px' },
+  btn: { padding: '11px 22px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', alignSelf: 'flex-start' },
+  success: { backgroundColor: 'rgba(74,222,128,0.1)', border: '1px solid var(--accent)', color: 'var(--accent)', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
   error: { backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#fca5a5', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
   goalGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '14px' },
-  goalCard: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '18px', borderTop: '3px solid #38bdf8' },
+  goalCard: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '18px', borderTop: '3px solid #38bdf8' },
   goalTop: { display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' },
   goalIcon: { fontSize: '24px', flexShrink: 0 },
-  goalName: { color: '#f1f5f9', fontSize: '14px', fontWeight: 600 },
-  goalDeadline: { color: '#64748b', fontSize: '12px', marginTop: '2px' },
-  progressBar: { height: '8px', backgroundColor: '#0f172a', borderRadius: '4px', overflow: 'hidden', marginBottom: '6px' },
+  goalName: { color: 'var(--text)', fontSize: '14px', fontWeight: 600 },
+  goalDeadline: { color: 'var(--text-muted)', fontSize: '12px', marginTop: '2px' },
+  progressBar: { height: '8px', backgroundColor: 'var(--bg-input)', borderRadius: '4px', overflow: 'hidden', marginBottom: '6px' },
   progressFill: { height: '100%', backgroundColor: '#38bdf8', borderRadius: '4px', transition: 'width 0.3s ease' },
   goalStats: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' },
   goalPct: { color: '#38bdf8', fontWeight: 700, fontSize: '16px' },
   updateRow: { display: 'flex', gap: '8px', alignItems: 'center' },
-  updateInput: { flex: 1, padding: '8px 12px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '6px', color: '#f1f5f9', fontSize: '13px', outline: 'none' },
-  deleteBtn: { backgroundColor: 'transparent', border: 'none', color: '#475569', cursor: 'pointer', fontSize: '14px', padding: '2px 6px', marginLeft: 'auto' },
-  empty: { textAlign: 'center', color: '#475569', padding: '40px', fontSize: '15px' },
+  updateInput: { flex: 1, padding: '8px 12px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '6px', color: 'var(--text)', fontSize: '13px', outline: 'none' },
+  deleteBtn: { backgroundColor: 'transparent', border: 'none', color: 'var(--text-dim)', cursor: 'pointer', fontSize: '14px', padding: '2px 6px', marginLeft: 'auto' },
+  empty: { textAlign: 'center', color: 'var(--text-dim)', padding: '40px', fontSize: '15px' },
 };

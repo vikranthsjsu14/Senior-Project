@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field
-from typing import Optional
+from typing import Optional, Literal
 from datetime import date as Date, datetime
 
 
@@ -19,12 +19,12 @@ class NutritionLog(SQLModel, table=True):
 
 class NutritionLogCreate(SQLModel):
     date: Date
-    meal_type: str
-    food_name: str
-    calories: float
-    protein_g: Optional[float] = None
-    carbs_g: Optional[float] = None
-    fat_g: Optional[float] = None
+    meal_type: Literal["breakfast", "lunch", "dinner", "snack"]
+    food_name: str = Field(min_length=1, max_length=200)
+    calories: float = Field(ge=0, le=10_000)
+    protein_g: Optional[float] = Field(default=None, ge=0, le=1_000)
+    carbs_g: Optional[float] = Field(default=None, ge=0, le=1_000)
+    fat_g: Optional[float] = Field(default=None, ge=0, le=1_000)
 
 
 class NutritionLogPublic(SQLModel):

@@ -1,6 +1,7 @@
 import json
 import anthropic
 from datetime import date, timedelta
+from fastapi import HTTPException
 from sqlmodel import select
 
 from ..config import settings
@@ -10,6 +11,7 @@ from ..models.activity import Activity
 from ..models.goals import Goal
 from ..models.nutrition import NutritionLog
 from ..models.ai_recommendation import AIRecommendation
+from .ai_errors import call_claude, parse_ai_json
 
 SYSTEM_PROMPT = """You are an expert personal health coach and certified nutritionist with 15 years of experience.
 You provide evidence-based, personalized health and fitness recommendations based on real user data.
@@ -74,7 +76,7 @@ def _format_goals(goals: list) -> str:
 def get_recommendations(user_id: int, recommendation_type: str, session) -> dict:
     user = session.get(User, user_id)
     if not user:
-        raise ValueError("User not found")
+        raise HTTPException(status_code=404, detail="User not found")
 
     today = date.today()
     week_ago = today - timedelta(days=7)
@@ -164,19 +166,14 @@ Recommendation type requested: {recommendation_type}
 Please provide the full JSON response now."""
 
     client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
-    message = client.messages.create(
+    response_text = call_claude(
+        client,
         model="claude-haiku-4-5-20251001",
         max_tokens=2048,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}],
     )
-
-    response_text = message.content[0].text.strip()
-    # Strip markdown code blocks if present
-    if response_text.startswith("```"):
-        response_text = response_text.split("\n", 1)[1]
-        response_text = response_text.rsplit("```", 1)[0].strip()
-    recommendation_data = json.loads(response_text)
+    recommendation_data = parse_ai_json(response_text)
 
     # Cache in database
     cached = AIRecommendation(

@@ -10,3 +10,12 @@ export const updateMe = async (data: UserUpdate) => {
   const res = await client.patch<User>('/users/me', data);
   return res.data;
 };
+
+export const exportMyData = async () => {
+  const res = await client.get('/users/me/export');
+  return res.data;
+};
+
+export const deleteMyAccount = async () => {
+  await client.delete('/users/me');
+};

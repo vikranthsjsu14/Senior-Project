@@ -92,7 +92,7 @@ export default function ActivitiesPage() {
                   <span>{a.duration_minutes} min</span>
                   {a.calories_burned && <span>🔥 {a.calories_burned} kcal</span>}
                   {a.distance_km && <span>📍 {a.distance_km} km</span>}
-                  <span style={{ color: '#64748b' }}>{a.date}</span>
+                  <span style={{ color: 'var(--text-muted)' }}>{a.date}</span>
                 </div>
                 {a.notes && <div style={styles.notes}>{a.notes}</div>}
               </div>
@@ -110,9 +110,9 @@ function Field({ label, type = 'text', value, onChange, placeholder, required }:
 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-      <label style={{ color: '#94a3b8', fontSize: '13px', fontWeight: 500 }}>{label}</label>
+      <label style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 }}>{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} required={required}
-        style={{ padding: '10px 14px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '8px', color: '#f1f5f9', fontSize: '14px', outline: 'none' }} />
+        style={{ padding: '10px 14px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text)', fontSize: '14px', outline: 'none' }} />
     </div>
   );
 }
@@ -120,24 +120,24 @@ function Field({ label, type = 'text', value, onChange, placeholder, required }:
 const styles: Record<string, React.CSSProperties> = {
   page: { padding: '24px', maxWidth: '900px', margin: '0 auto' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' },
-  title: { color: '#f1f5f9', margin: 0 },
-  addBtn: { padding: '10px 20px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' },
-  form: { backgroundColor: '#1e293b', padding: '24px', borderRadius: '12px', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' },
-  formTitle: { color: '#f1f5f9', margin: 0 },
+  title: { color: 'var(--text)', margin: 0 },
+  addBtn: { padding: '10px 20px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' },
+  form: { backgroundColor: 'var(--bg-card)', padding: '24px', borderRadius: '12px', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' },
+  formTitle: { color: 'var(--text)', margin: 0 },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' },
-  label: { color: '#94a3b8', fontSize: '13px', fontWeight: 500 },
-  select: { padding: '10px 14px', backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '8px', color: '#f1f5f9', fontSize: '14px' },
-  btn: { padding: '11px 22px', backgroundColor: '#4ade80', color: '#0f172a', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', alignSelf: 'flex-start' },
-  success: { backgroundColor: 'rgba(74,222,128,0.1)', border: '1px solid #4ade80', color: '#4ade80', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
+  label: { color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500 },
+  select: { padding: '10px 14px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text)', fontSize: '14px' },
+  btn: { padding: '11px 22px', backgroundColor: 'var(--accent)', color: 'var(--accent-dark)', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', alignSelf: 'flex-start' },
+  success: { backgroundColor: 'rgba(74,222,128,0.1)', border: '1px solid var(--accent)', color: 'var(--accent)', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
   error: { backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', color: '#fca5a5', padding: '10px 16px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' },
   list: { display: 'flex', flexDirection: 'column', gap: '10px' },
-  card: { backgroundColor: '#1e293b', borderRadius: '12px', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '16px' },
+  card: { backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '16px' },
   cardIcon: { fontSize: '28px', flexShrink: 0 },
   cardBody: { flex: 1 },
-  cardName: { color: '#f1f5f9', fontWeight: 600, fontSize: '15px', marginBottom: '4px' },
-  cardMeta: { display: 'flex', gap: '12px', flexWrap: 'wrap', color: '#94a3b8', fontSize: '13px', alignItems: 'center' },
-  badge: { backgroundColor: '#0f172a', padding: '2px 8px', borderRadius: '12px', color: '#38bdf8', fontSize: '12px' },
-  notes: { color: '#64748b', fontSize: '12px', marginTop: '4px' },
-  deleteBtn: { backgroundColor: 'transparent', border: 'none', color: '#475569', cursor: 'pointer', fontSize: '16px', padding: '4px 8px', flexShrink: 0 },
-  empty: { textAlign: 'center', color: '#475569', padding: '40px', fontSize: '15px' },
+  cardName: { color: 'var(--text)', fontWeight: 600, fontSize: '15px', marginBottom: '4px' },
+  cardMeta: { display: 'flex', gap: '12px', flexWrap: 'wrap', color: 'var(--text-secondary)', fontSize: '13px', alignItems: 'center' },
+  badge: { backgroundColor: 'var(--bg-input)', padding: '2px 8px', borderRadius: '12px', color: '#38bdf8', fontSize: '12px' },
+  notes: { color: 'var(--text-muted)', fontSize: '12px', marginTop: '4px' },
+  deleteBtn: { backgroundColor: 'transparent', border: 'none', color: 'var(--text-dim)', cursor: 'pointer', fontSize: '16px', padding: '4px 8px', flexShrink: 0 },
+  empty: { textAlign: 'center', color: 'var(--text-dim)', padding: '40px', fontSize: '15px' },
 };

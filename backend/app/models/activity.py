@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field
-from typing import Optional
+from typing import Optional, Literal
 from datetime import date as Date, datetime
 
 
@@ -18,13 +18,13 @@ class Activity(SQLModel, table=True):
 
 
 class ActivityCreate(SQLModel):
-    name: str
-    type: str
-    duration_minutes: int
-    calories_burned: Optional[float] = None
-    distance_km: Optional[float] = None
+    name: str = Field(min_length=1, max_length=100)
+    type: Literal["cardio", "strength", "flexibility", "sports"]
+    duration_minutes: int = Field(ge=1, le=1_440)
+    calories_burned: Optional[float] = Field(default=None, ge=0, le=20_000)
+    distance_km: Optional[float] = Field(default=None, ge=0, le=1_000)
     date: Date
-    notes: Optional[str] = None
+    notes: Optional[str] = Field(default=None, max_length=500)
 
 
 class ActivityPublic(SQLModel):

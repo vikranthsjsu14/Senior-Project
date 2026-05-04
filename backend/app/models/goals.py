@@ -18,17 +18,17 @@ class Goal(SQLModel, table=True):
 
 
 class GoalCreate(SQLModel):
-    type: str
-    description: Optional[str] = None
-    target_value: float
-    unit: str
+    type: str = Field(min_length=1, max_length=50)
+    description: Optional[str] = Field(default=None, max_length=200)
+    target_value: float = Field(gt=0, le=1_000_000)
+    unit: str = Field(min_length=1, max_length=20)
     deadline: Optional[Date] = None
 
 
 class GoalUpdate(SQLModel):
-    current_value: Optional[float] = None
+    current_value: Optional[float] = Field(default=None, ge=0, le=1_000_000)
     is_completed: Optional[bool] = None
-    description: Optional[str] = None
+    description: Optional[str] = Field(default=None, max_length=200)
 
 
 class GoalPublic(SQLModel):
