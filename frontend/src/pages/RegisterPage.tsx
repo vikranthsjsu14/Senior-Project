@@ -34,9 +34,8 @@ export default function RegisterPage() {
     <div style={styles.page}>
       <div style={styles.card}>
         <div style={styles.header}>
-          <span style={styles.logo}>💪</span>
-          <h1 style={styles.title}>Create Account</h1>
-          <p style={styles.subtitle}>Start your health journey today</p>
+          <img src="/healthai-logo.png" alt="HealthAI" style={styles.logoImg} />
+          <h2 style={styles.title}>Create Account</h2>
         </div>
         <form onSubmit={handleSubmit} style={styles.form}>
           {error && <div style={styles.error}>{error}</div>}
@@ -116,10 +115,9 @@ const styles: Record<string, React.CSSProperties> = {
     boxShadow: '0 20px 60px var(--shadow)',
     border: '1px solid var(--border)',
   },
-  header: { textAlign: 'center', marginBottom: '32px' },
-  logo: { fontSize: '48px' },
-  title: { color: 'var(--accent)', margin: '8px 0 4px', fontSize: '28px' },
-  subtitle: { color: 'var(--text-secondary)', margin: 0, fontSize: '14px' },
+  header: { textAlign: 'center', marginBottom: '24px' },
+  logoImg: { width: '100%', maxWidth: '240px', height: 'auto', display: 'block', margin: '0 auto 12px' },
+  title: { color: 'var(--text)', margin: 0, fontSize: '20px', fontWeight: 600 },
   form: { display: 'flex', flexDirection: 'column', gap: '14px' },
   error: {
     backgroundColor: 'rgba(239,68,68,0.15)',

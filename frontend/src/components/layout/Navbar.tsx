@@ -43,10 +43,9 @@ export default function Navbar() {
       borderBottom: '1px solid var(--border)',
       transition: 'background-color 0.3s ease',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontSize: '24px' }}>💪</span>
-        <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--accent)' }}>HealthAI</span>
-      </div>
+      <Link to="/dashboard" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+        <img src="/healthai-logo.png" alt="HealthAI" style={{ height: '46px', width: 'auto', display: 'block' }} />
+      </Link>
 
       <div style={{ display: 'flex', gap: '4px' }}>
         {navItems.map((item) => (

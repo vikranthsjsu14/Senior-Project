@@ -28,9 +28,7 @@ export default function LoginPage() {
     <div style={styles.page}>
       <div style={styles.card}>
         <div style={styles.header}>
-          <span style={styles.logo}>💪</span>
-          <h1 style={styles.title}>HealthAI</h1>
-          <p style={styles.subtitle}>Your AI-powered fitness companion</p>
+          <img src="/healthai-logo.png" alt="HealthAI" style={styles.logoImg} />
         </div>
         <form onSubmit={handleSubmit} style={styles.form}>
           {error && <div style={styles.error}>{error}</div>}
@@ -88,10 +86,8 @@ const styles: Record<string, React.CSSProperties> = {
     boxShadow: '0 20px 60px var(--shadow)',
     border: '1px solid var(--border)',
   },
-  header: { textAlign: 'center', marginBottom: '32px' },
-  logo: { fontSize: '48px' },
-  title: { color: 'var(--accent)', margin: '8px 0 4px', fontSize: '28px' },
-  subtitle: { color: 'var(--text-secondary)', margin: 0, fontSize: '14px' },
+  header: { textAlign: 'center', marginBottom: '24px' },
+  logoImg: { width: '100%', maxWidth: '280px', height: 'auto', display: 'block', margin: '0 auto' },
   form: { display: 'flex', flexDirection: 'column', gap: '16px' },
   error: {
     backgroundColor: 'rgba(239,68,68,0.15)',
