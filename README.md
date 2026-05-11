@@ -1,4 +1,4 @@
-# HealthAI — AI-Powered Personal Health & Fitness App
+# HealthAI — AI-Powered Personal Health & Fitness App by: Vikranth Jakamukala, Nikhil Khanchandani, chint patel, Dustin Nguyen
 
 A full-stack web application that combines digital health tracking with artificial intelligence to provide personalized fitness and nutrition recommendations. Built as a Senior Project exploring the integration of AI in preventative healthcare.
 
